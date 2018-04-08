@@ -19,7 +19,7 @@ public Plugin myinfo =
 {
 	name = "Server Lock",
 	author = "d4Ck(vk.com/geliydaun)",
-	version = "1.0.2",
+	version = "1.0.0",
 	url = "http://crystals.pw/"
 };
 
@@ -36,11 +36,8 @@ public void OnPluginStart()
 		}
 	}
 	
-	RegAdminCmd("sm_sl_lock", cmdLockAdmin, ADMFLAG_ROOT);
-	RegServerCmd("sm_sl_lock", cmdLock);
-	
-	RegAdminCmd("sm_sl_reload", cmdReloadAdmin, ADMFLAG_ROOT);
-	RegServerCmd("sm_sl_reload", cmdReload);
+	RegAdminCmd("sm_sl_lock", cmdLock, ADMFLAG_ROOT);
+	RegAdminCmd("sm_sl_reload", cmdReload, ADMFLAG_ROOT);
 	
 	LoadCfg();
 }
@@ -72,36 +69,15 @@ public void LockServer_Callback(TopMenu hMenu, TopMenuAction action, TopMenuObje
 		}
 		case TopMenuAction_SelectOption:
 		{
-			cmdLock(0);
+			cmdLock(client, 0);
 		}
 	}
 }
 
-public Action cmdLockAdmin(int client, int args)
+public Action cmdLock(int client, int args)
 {
-	cmdLock(0);
-	
-	return Plugin_Handled;
-}
-
-public Action cmdReloadAdmin(int client, int args)
-{
-	cmdReload(0);
-	
-	return Plugin_Handled;
-}
-
-public Action cmdReload(int args)
-{
-	LoadCfg();
-	
-	return Plugin_Handled;
-}
-
-public Action cmdLock(int args)
-{
-	PrintToServer("[ServerLock] Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
-	PrintToChatAll(" \x04[ServerLock] \x01Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
+	if(client == 0) PrintToServer("[ServerLock] Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
+	else PrintToChat(client, " \x04[ServerLock] \x01Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
 	
 	LoadCfg();
 	
@@ -109,6 +85,13 @@ public Action cmdLock(int args)
 	KvSetString(g_hKV, "white_list", g_sWhiteList);
 	KeyValuesToFile(g_hKV, g_sPatch); 
 	
+	LoadCfg();
+	
+	return Plugin_Handled;
+}
+
+public Action cmdReload(int client, int args)
+{
 	LoadCfg();
 	
 	return Plugin_Handled;
