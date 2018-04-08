@@ -8,10 +8,10 @@
 
 #pragma newdecls required
 
-bool g_bServerLock = false;
+bool g_bServerLock;
 char g_sWhiteList[512];
 char g_sPatch[256];
-Handle g_hKV = INVALID_HANDLE;
+Handle g_hKV;
 
 TopMenu g_hAdminMenu = null;
 
@@ -19,7 +19,7 @@ public Plugin myinfo =
 {
 	name = "Server Lock",
 	author = "d4Ck(vk.com/geliydaun)",
-	version = "1.0.1",
+	version = "1.0.2",
 	url = "http://crystals.pw/"
 };
 
@@ -29,8 +29,7 @@ public void OnPluginStart()
 
 	if (LibraryExists("adminmenu")) 
 	{
-		TopMenu hTopMenu;
-		hTopMenu = GetAdminTopMenu();
+		TopMenu hTopMenu = GetAdminTopMenu();
 		if (hTopMenu != null)
 		{
 			OnAdminMenuReady(hTopMenu);
@@ -44,12 +43,6 @@ public void OnPluginStart()
 	RegServerCmd("sm_sl_reload", cmdReload);
 	
 	LoadCfg();
-}
-
-public void OnLibraryRemoved(const char[] szName)
-{
-    if (StrEqual(szName, "adminmenu")) 
-		g_hAdminMenu = null;
 }
 
 public void OnAdminMenuReady(Handle aTopMenu)
@@ -75,23 +68,27 @@ public void LockServer_Callback(TopMenu hMenu, TopMenuAction action, TopMenuObje
 	{
 		case TopMenuAction_DisplayOption:
 		{
-			FormatEx(sBuffer, maxlength, g_bServerLock ? "Открыть сервер" : "Закрыть сервер");
+			strcopy(sBuffer, maxlength, g_bServerLock ? "Открыть сервер" : "Закрыть сервер");
 		}
 		case TopMenuAction_SelectOption:
 		{
-			ServerCommand("sm_sl_lock");
+			cmdLock(0);
 		}
 	}
 }
 
 public Action cmdLockAdmin(int client, int args)
 {
-	ServerCommand("sm_sl_lock");
+	cmdLock(0);
+	
+	return Plugin_Handled;
 }
 
 public Action cmdReloadAdmin(int client, int args)
 {
-	ServerCommand("sm_sl_lock");
+	cmdReload(0);
+	
+	return Plugin_Handled;
 }
 
 public Action cmdReload(int args)
