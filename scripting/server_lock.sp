@@ -79,10 +79,7 @@ public Action cmdLock(int client, int args)
 	if(client == 0) PrintToServer("[ServerLock] Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
 	else PrintToChat(client, " \x04[ServerLock] \x01Сервер успешно %s!", g_bServerLock ? "открыт" : "закрыт");
 	
-	LoadCfg();
-	
 	KvSetNum(g_hKV, "server_lock", (g_bServerLock ? 0 : 1));
-	KvSetString(g_hKV, "white_list", g_sWhiteList);
 	KeyValuesToFile(g_hKV, g_sPatch); 
 	
 	LoadCfg();
